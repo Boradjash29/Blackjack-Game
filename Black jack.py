@@ -1,66 +1,73 @@
-print("---------------------------WELCOME TO BLACK JACK GAME -------------------------")
-
 import random
 
-cards=['A','2','3','4','5','6','7','8','9','10','J','Q','K']
+print("----- WELCOME TO BLACKJACK GAME -----")
 
-# Function to calculate the total value of cards
-def calculate_total(cards):
-    total =sum(cards) 
-    if 1 in cards and total + 10 <= 21:
-        return total + 10
+# Function to deal a random card
+def deal_card():
+    cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    return random.choice(cards)
+
+# Function to calculate total hand value
+def calculate_total(hand):
+    total = 0
+    aces = 0
+    for card in hand:
+        if card in ['J', 'Q', 'K']:
+            total += 10
+        elif card == 'A':
+            total += 11
+            aces += 1
+        else:
+            total += int(card)
+
+    # Adjust for Ace if total is more than 21
+    while total > 21 and aces:
+        total -= 10
+        aces -= 1
+
     return total
 
-#Function to deal a card
-def deal_card():
-    return random.randint(1,13)
-   
-# Main game loop 
+# Main game loop
 while True:
-    # Initialize player and dealer hands
-    player_hand =[deal_card(),deal_card()]   
-    dealer_hand = [deal_card(),deal_card()]     
-    
-    # show initial hands
-    print("your hand:",player_hand)
-    print("Dealer's hand",[dealer_hand[0],"x"])  # Show only one of the dealer's cards
-    
-    
-    #Player's Turn 
-    while calculate_total(player_hand) < 21:
-       choice = input("Do you want to hit or stand ? (h/s) :").lower()
-       if choice == 'h':
-           player_hand.append(deal_card())
-           print("your hand :",player_hand)
-       elif choice =='s':
-           break
-       
-    player_total = calculate_total(player_hand)
-    
-    if player_total > 21:
-        print("Bust! you lose.")
-    else:
-        # Dealer's Turn 
-        while calculate_total(dealer_hand) < 17 :
-            dealer_hand.append(deal_card())
-        dealer_total = calculate_total(dealer_hand)  
-        
-        # show Final hands
-        print("Your hand :",player_hand,"Total :",player_total)
-        print("Dealer's hand:",dealer_hand,"Total :" ,dealer_total )    
-        
-        # Determine Winner
-        if dealer_total > 21 or player_total > dealer_total:
-            print("You Win!!")
-        elif dealer_total > player_total :
-            print("Dealer Wins.")
+    player = [deal_card(), deal_card()]
+    dealer = [deal_card(), deal_card()]
+
+    print("Your hand:", player)
+    print("Dealer's hand: [", dealer[0], ", X ]")
+
+    # Player's turn
+    while calculate_total(player) < 21:
+        choice = input("Hit or Stand? (h/s): ").lower()
+        if choice == 'h':
+            player.append(deal_card())
+            print("Your hand:", player)
         else:
-            print("It's a Draw.")    
-            
-    play_again = input("Do you want to play again ? (y/n):").lower()
-    if play_again != 'y':
+            break
+
+    player_total = calculate_total(player)
+
+    if player_total > 21:
+        print("You busted! Dealer wins.")
+    else:
+        # Dealer's turn
+        while calculate_total(dealer) < 17:
+            dealer.append(deal_card())
+
+        dealer_total = calculate_total(dealer)
+
+        print("Your hand:", player, "Total:", player_total)
+        print("Dealer's hand:", dealer, "Total:", dealer_total)
+
+        # Decide winner
+        if dealer_total > 21 or player_total > dealer_total:
+            print("You win!")
+        elif dealer_total > player_total:
+            print("Dealer wins.")
+        else:
+            print("It's a draw.")
+
+    # Play again?
+    again = input("Play again? (y/n): ").lower()
+    if again != 'y':
+        print("Thanks for playing!")
         break
-               
-               
-    
-  
